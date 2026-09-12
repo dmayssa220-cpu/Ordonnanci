@@ -15,9 +15,11 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/profile', require('./routes/profile.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
+app.use('/api/medications', require('./routes/medication.routes'));
+app.use('/api/reminders', require('./routes/reminder.routes'));
 
-// Les routes des phases suivantes (médicaments, RDV, ordonnances...)
+// Les routes des phases suivantes (rendez-vous, ordonnances IA...)
 // seront montées ici au fur et à mesure, par exemple :
-// app.use('/api/medications', require('./routes/medication.routes'));
+// app.use('/api/appointments', require('./routes/appointment.routes'));
 
 module.exports = app;

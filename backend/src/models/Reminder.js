@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const reminderSchema = new mongoose.Schema(
   {
     medicationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Medication', required: true },
+    patientId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     date: { type: Date, required: true },
     heure: { type: String, required: true },
     statut: {
