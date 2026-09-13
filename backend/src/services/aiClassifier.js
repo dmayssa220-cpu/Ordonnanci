@@ -29,7 +29,8 @@ const vectoriser = (ligne) => {
   return VOCABULAIRE.map((mot) => (texteNormalise.includes(mot) ? 1 : 0));
 };
 
-
+// Jeu de données synthétique minimal — À REMPLACER par de vraies ordonnances
+// annotées dès que possible.
 const DONNEES_ENTRAINEMENT = [
   { texte: 'Doliprane 1000mg 3 fois par jour', label: 1 },
   { texte: 'Paracetamol 500 mg matin et soir', label: 1 },

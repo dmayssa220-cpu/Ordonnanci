@@ -22,5 +22,7 @@ app.use('/api/reminders', require('./routes/reminder.routes'));
 app.use('/api/doctors', require('./routes/doctor.routes'));
 app.use('/api/appointments', require('./routes/appointment.routes'));
 app.use('/api/prescriptions', require('./routes/prescription.routes'));
+app.use('/api/notifications', require('./routes/notification.routes'));
+app.use('/api/dashboard', require('./routes/dashboard.routes'));
 
 module.exports = app;

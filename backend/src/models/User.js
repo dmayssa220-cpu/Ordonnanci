@@ -10,6 +10,11 @@ const userSchema = new mongoose.Schema(
     telephone: { type: String },
     photoUrl: { type: String },
     estActif: { type: Boolean, default: true },
+    preferencesNotification: {
+      rappelsMedicaments: { type: Boolean, default: true },
+      rappelsRendezVous: { type: Boolean, default: true },
+      messages: { type: Boolean, default: true },
+    },
   },
   { timestamps: true }
 );

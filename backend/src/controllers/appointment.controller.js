@@ -1,4 +1,5 @@
 const Appointment = require('../models/Appointment');
+const { creerNotification } = require('../services/notificationService');
 
 const createAppointment = async (req, res) => {
   try {
@@ -21,6 +22,19 @@ const createAppointment = async (req, res) => {
       motif,
       statut: 'confirme',
     });
+
+    await creerNotification(
+      req.user.id,
+      'rendezvous',
+      `Rendez-vous confirmé le ${date} à ${heure}`,
+      `/appointments/${rdv._id}`
+    );
+    await creerNotification(
+      medecinId,
+      'rendezvous',
+      `Nouveau rendez-vous le ${date} à ${heure}`,
+      `/appointments/${rdv._id}`
+    );
 
     return res.status(201).json({ message: 'Rendez-vous confirmé', rdv });
   } catch (error) {
@@ -82,6 +96,17 @@ const cancelAppointment = async (req, res) => {
     rdv.statut = 'annule';
     await rdv.save();
 
+    const dateStr = rdv.date.toISOString().slice(0, 10);
+    const heureStr = rdv.date.toISOString().slice(11, 16);
+    const autrePartieId =
+      req.user.id === rdv.patientId.toString() ? rdv.medecinId : rdv.patientId;
+    await creerNotification(
+      autrePartieId,
+      'rendezvous',
+      `Le rendez-vous du ${dateStr} à ${heureStr} a été annulé`,
+      `/appointments/${rdv._id}`
+    );
+
     return res.status(200).json({ message: 'Rendez-vous annulé', rdv });
   } catch (error) {
     return res.status(500).json({ message: "Erreur lors de l'annulation", error: error.message });
@@ -109,6 +134,13 @@ const rescheduleAppointment = async (req, res) => {
     rdv.date = nouvelleDateHeure;
     rdv.statut = 'confirme';
     await rdv.save();
+
+    await creerNotification(
+      rdv.medecinId,
+      'rendezvous',
+      `Le patient a reporté son rendez-vous au ${date} à ${heure}`,
+      `/appointments/${rdv._id}`
+    );
 
     return res.status(200).json({ message: 'Rendez-vous reporté', rdv });
   } catch (error) {
