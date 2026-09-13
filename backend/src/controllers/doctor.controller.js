@@ -15,8 +15,8 @@ const searchDoctors = async (req, res) => {
 
 const getAvailableSlots = async (req, res) => {
   try {
-    const { id } = req.params; 
-    const { date } = req.query; 
+    const { id } = req.params; // userId du médecin
+    const { date } = req.query; // format YYYY-MM-DD
 
     if (!date) {
       return res.status(400).json({ message: 'Le paramètre date est requis (YYYY-MM-DD)' });

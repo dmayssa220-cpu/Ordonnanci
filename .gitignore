@@ -4,3 +4,5 @@ dist/
 www/
 *.log
 .DS_Store
+backend/uploads/*
+!backend/uploads/.gitkeep

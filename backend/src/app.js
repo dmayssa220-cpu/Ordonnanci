@@ -1,10 +1,12 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Route de vérification de santé de l'API
 app.get('/api/health', (req, res) => {
@@ -19,9 +21,6 @@ app.use('/api/medications', require('./routes/medication.routes'));
 app.use('/api/reminders', require('./routes/reminder.routes'));
 app.use('/api/doctors', require('./routes/doctor.routes'));
 app.use('/api/appointments', require('./routes/appointment.routes'));
-
-// Les routes des phases suivantes (reconnaissance d'ordonnances IA...)
-// seront montées ici au fur et à mesure, par exemple :
-// app.use('/api/prescriptions', require('./routes/prescription.routes'));
+app.use('/api/prescriptions', require('./routes/prescription.routes'));
 
 module.exports = app;
