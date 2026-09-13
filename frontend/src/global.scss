@@ -1,0 +1,89 @@
+/*
+ 
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/**
+ * Ionic Dark Mode
+ * -----------------------------------------------------
+ * For more info, please see:
+ * https://ionicframework.com/docs/theming/dark-mode
+ */
+
+/* @import "@ionic/angular/css/palettes/dark.always.css"; */
+/* @import "@ionic/angular/css/palettes/dark.class.css"; */
+@import '@ionic/angular/css/palettes/dark.system.css';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap');
+
+h1,
+h2,
+h3,
+.odonnanci-headline {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ion-color-dark);
+}
+
+ion-card {
+  border-radius: var(--odonnanci-radius-card);
+  box-shadow: none;
+  border: 1px solid rgba(22, 48, 43, 0.08);
+}
+
+ion-button {
+  --border-radius: var(--odonnanci-radius-control);
+  text-transform: none;
+  font-weight: 600;
+}
+
+ion-item {
+  --border-radius: var(--odonnanci-radius-control);
+}
+
+/* Badge de statut réutilisable (observance, statut de RDV, validation ordonnance) */
+.odonnanci-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--odonnanci-space-xs) var(--odonnanci-space-sm);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.odonnanci-badge--succes {
+  background: rgba(47, 158, 110, 0.12);
+  color: var(--ion-color-success-shade);
+}
+
+.odonnanci-badge--alerte {
+  background: rgba(193, 72, 61, 0.12);
+  color: var(--ion-color-danger-shade);
+}
+
+.odonnanci-badge--attente {
+  background: rgba(217, 142, 63, 0.14);
+  color: var(--ion-color-tertiary-shade);
+}

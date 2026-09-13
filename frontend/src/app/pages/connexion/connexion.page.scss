@@ -1,0 +1,16 @@
+.odonnanci-auth-container {
+  max-width: 420px;
+  margin: 0 auto;
+  padding-top: var(--odonnanci-space-lg);
+}
+
+.odonnanci-erreur-champ {
+  margin: 0 0 var(--odonnanci-space-sm) var(--odonnanci-space-md);
+  font-size: 0.85rem;
+}
+
+.odonnanci-lien-secondaire {
+  text-align: center;
+  margin-top: var(--odonnanci-space-lg);
+  color: var(--ion-color-medium);
+}

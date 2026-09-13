@@ -1,0 +1,86 @@
+/*
+ * Odonnanci — thème Ionic
+ * Remplace entièrement le fichier src/theme/variables.scss généré par Ionic.
+ */
+
+:root {
+  /* Marque */
+  --ion-color-primary: #0f6e5c;
+  --ion-color-primary-rgb: 15, 110, 92;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #0d6151;
+  --ion-color-primary-tint: #277d6c;
+
+  --ion-color-secondary: #3d6b8a;
+  --ion-color-secondary-rgb: 61, 107, 138;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #365e79;
+  --ion-color-secondary-tint: #517a96;
+
+  --ion-color-tertiary: #d98e3f;
+  --ion-color-tertiary-rgb: 217, 142, 63;
+  --ion-color-tertiary-contrast: #16302b;
+  --ion-color-tertiary-contrast-rgb: 22, 48, 43;
+  --ion-color-tertiary-shade: #bf7d37;
+  --ion-color-tertiary-tint: #dd9a52;
+
+  --ion-color-success: #2f9e6e;
+  --ion-color-success-rgb: 47, 158, 110;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #298b61;
+  --ion-color-success-tint: #43a87d;
+
+  --ion-color-warning: #d98e3f;
+  --ion-color-warning-rgb: 217, 142, 63;
+  --ion-color-warning-contrast: #16302b;
+  --ion-color-warning-contrast-rgb: 22, 48, 43;
+  --ion-color-warning-shade: #bf7d37;
+  --ion-color-warning-tint: #dd9a52;
+
+  --ion-color-danger: #c1483d;
+  --ion-color-danger-rgb: 193, 72, 61;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #aa3f35;
+  --ion-color-danger-tint: #c85b51;
+
+  --ion-color-dark: #16302b;
+  --ion-color-dark-rgb: 22, 48, 43;
+  --ion-color-dark-contrast: #ffffff;
+  --ion-color-dark-contrast-rgb: 255, 255, 255;
+  --ion-color-dark-shade: #132a26;
+  --ion-color-dark-tint: #2d4540;
+
+  --ion-color-medium: #5b6b66;
+  --ion-color-medium-rgb: 91, 107, 102;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #505e5a;
+  --ion-color-medium-tint: #6b7a75;
+
+  --ion-color-light: #f4f7f5;
+  --ion-color-light-rgb: 244, 247, 245;
+  --ion-color-light-contrast: #16302b;
+  --ion-color-light-contrast-rgb: 22, 48, 43;
+  --ion-color-light-shade: #d7d9d8;
+  --ion-color-light-tint: #f5f8f6;
+
+  --ion-background-color: #f4f7f5;
+  --ion-background-color-rgb: 244, 247, 245;
+  --ion-text-color: #16302b;
+  --ion-text-color-rgb: 22, 48, 43;
+
+  --ion-font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Tokens Odonnanci — utilisés dans global.scss et les pages */
+  --odonnanci-radius-card: 14px;
+  --odonnanci-radius-control: 10px;
+  --odonnanci-space-xs: 4px;
+  --odonnanci-space-sm: 8px;
+  --odonnanci-space-md: 16px;
+  --odonnanci-space-lg: 24px;
+  --odonnanci-space-xl: 32px;
+}

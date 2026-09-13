@@ -9,7 +9,7 @@ const register = async (req, res) => {
   try {
     const { nom, prenom, email, motDePasse, role, specialite } = req.body;
 
-    const utilisateurExistant = await User.findOne({ email });
+    const utilisateurExistant = await User.findOne({ email: email.trim().toLowerCase() });
     if (utilisateurExistant) {
       return res.status(409).json({ message: 'Un compte existe déjà avec cet email' });
     }
@@ -52,7 +52,7 @@ const login = async (req, res) => {
   try {
     const { email, motDePasse } = req.body;
 
-    const utilisateur = await User.findOne({ email });
+    const utilisateur = await User.findOne({ email: email.trim().toLowerCase() });
     if (!utilisateur) {
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }

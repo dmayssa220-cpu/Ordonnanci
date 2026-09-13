@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Créer un compte</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="odonnanci-auth-container">
+    <h1 class="odonnanci-headline">Bienvenue sur Odonnanci</h1>
+
+    <form [formGroup]="formulaire" (ngSubmit)="sInscrire()">
+      <ion-segment formControlName="role">
+        <ion-segment-button value="patient">
+          <ion-label>Patient</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="medecin">
+          <ion-label>Médecin</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
+      <ion-item>
+        <ion-label position="stacked">Prénom</ion-label>
+        <ion-input formControlName="prenom"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Nom</ion-label>
+        <ion-input formControlName="nom"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Email</ion-label>
+        <ion-input type="email" formControlName="email"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Mot de passe</ion-label>
+        <ion-input type="password" formControlName="motDePasse"></ion-input>
+      </ion-item>
+
+      <ion-item *ngIf="estMedecin">
+        <ion-label position="stacked">Spécialité</ion-label>
+        <ion-input formControlName="specialite" placeholder="ex. Cardiologie"></ion-input>
+      </ion-item>
+
+      <ion-text color="danger" *ngIf="erreur">
+        <p class="odonnanci-erreur-champ">{{ erreur }}</p>
+      </ion-text>
+
+      <ion-button expand="block" type="submit" [disabled]="chargement" class="ion-margin-top">
+        {{ chargement ? 'Création...' : 'Créer mon compte' }}
+      </ion-button>
+    </form>
+
+    <p class="odonnanci-lien-secondaire">
+      Déjà un compte ? <a routerLink="/connexion">Se connecter</a>
+    </p>
+  </div>
+</ion-content>

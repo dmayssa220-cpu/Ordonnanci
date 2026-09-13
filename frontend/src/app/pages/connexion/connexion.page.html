@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Connexion</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="odonnanci-auth-container">
+    <h1 class="odonnanci-headline">Bon retour</h1>
+    <p>Connecte-toi pour suivre tes traitements et tes rendez-vous.</p>
+
+    <form [formGroup]="formulaire" (ngSubmit)="seConnecter()">
+      <ion-item>
+        <ion-label position="stacked">Email</ion-label>
+        <ion-input type="email" formControlName="email" autocomplete="email"></ion-input>
+      </ion-item>
+      <ion-text
+        color="danger"
+        *ngIf="formulaire.get('email')?.touched && formulaire.get('email')?.invalid"
+      >
+        <p class="odonnanci-erreur-champ">Email invalide</p>
+      </ion-text>
+
+      <ion-item>
+        <ion-label position="stacked">Mot de passe</ion-label>
+        <ion-input type="password" formControlName="motDePasse" autocomplete="current-password"></ion-input>
+      </ion-item>
+
+      <ion-text color="danger" *ngIf="erreur">
+        <p class="odonnanci-erreur-champ">{{ erreur }}</p>
+      </ion-text>
+
+      <ion-button expand="block" type="submit" [disabled]="chargement" class="ion-margin-top">
+        {{ chargement ? 'Connexion...' : 'Se connecter' }}
+      </ion-button>
+    </form>
+
+    <p class="odonnanci-lien-secondaire">
+      Pas encore de compte ? <a routerLink="/inscription">Créer un compte</a>
+    </p>
+  </div>
+</ion-content>
