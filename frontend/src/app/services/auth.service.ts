@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { BehaviorSubject, from, Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { StorageService } from './storage.service';
 
@@ -12,7 +12,7 @@ export interface Utilisateur {
   role: 'patient' | 'medecin' | 'admin';
 }
 
-interface ReponseAuth {
+export interface ReponseAuth {
   user: Utilisateur;
   accessToken: string;
   refreshToken: string;
@@ -33,23 +33,32 @@ export class AuthService {
     }
   }
 
-  inscription(donnees: Record<string, unknown>) {
+  inscription(donnees: Record<string, unknown>): Observable<ReponseAuth> {
     return this.api
       .post<ReponseAuth>('/auth/register', donnees)
-      .pipe(tap((reponse) => this.enregistrerSession(reponse)));
+      .pipe(switchMap((reponse) => from(this.enregistrerSession(reponse))));
   }
 
-  connexion(email: string, motDePasse: string) {
+  connexion(email: string, motDePasse: string): Observable<ReponseAuth> {
     return this.api
       .post<ReponseAuth>('/auth/login', { email, motDePasse })
-      .pipe(tap((reponse) => this.enregistrerSession(reponse)));
+      .pipe(switchMap((reponse) => from(this.enregistrerSession(reponse))));
   }
 
-  private async enregistrerSession(reponse: ReponseAuth): Promise<void> {
+  /**
+   * IMPORTANT : cette fonction est maintenant attendue via switchMap()+from()
+   * au lieu de tap(). Avec tap(), une fonction async n'est jamais attendue :
+   * l'observable émettait AVANT que le token soit réellement écrit dans le
+   * storage, ce qui pouvait provoquer un 401 juste après la connexion si une
+   * page suivante appelait l'API trop vite. Avec switchMap()+from(), le flux
+   * n'émet qu'une fois la session entièrement enregistrée.
+   */
+  private async enregistrerSession(reponse: ReponseAuth): Promise<ReponseAuth> {
     await this.storage.set('accessToken', reponse.accessToken);
     await this.storage.set('refreshToken', reponse.refreshToken);
     await this.storage.set('utilisateur', JSON.stringify(reponse.user));
     this.utilisateurCourant$.next(reponse.user);
+    return reponse;
   }
 
   async deconnexion(): Promise<void> {

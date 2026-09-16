@@ -17,7 +17,33 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
   
+   {
+    path: 'medicaments',
+    loadComponent: () => import('./pages/medicaments/medicaments.page').then((m) => m.MedicamentsPage),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'medicaments/ajouter',
+    loadComponent: () =>
+      import('./pages/medicaments/ajouter-medicament/ajouter-medicament.page').then(
+        (m) => m.AjouterMedicamentPage
+      ),
+    canActivate: [AuthGuard],
+  },
+
+  {
+    path: 'rappels',
+    loadComponent: () => import('./pages/rappels/rappels.page').then((m) => m.RappelsPage),
+    canActivate: [AuthGuard],
+  },
+
+  
   { path: 'patient/dashboard', redirectTo: 'profil' },
   { path: 'medecin/dashboard', redirectTo: 'profil' },
   { path: 'admin/dashboard', redirectTo: 'profil' },
+
+  
+  { path: '**', redirectTo: 'connexion' },
+
+
 ];

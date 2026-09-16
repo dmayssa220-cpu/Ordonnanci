@@ -2,10 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
-/**
- * Utilisation dans le routing :
- * { path: 'admin', component: AdminPage, canActivate: [RoleGuard], data: { roles: ['admin'] } }
- */
+
 @Injectable({ providedIn: 'root' })
 export class RoleGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}

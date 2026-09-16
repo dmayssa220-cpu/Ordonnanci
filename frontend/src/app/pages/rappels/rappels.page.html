@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/profil"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Aujourd'hui</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="chargerRappels($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="ion-text-center ion-padding" *ngIf="chargement">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <div class="ion-padding" *ngIf="!chargement && rappels.length === 0">
+    <p>Aucun rappel de médicament aujourd'hui.</p>
+    <a routerLink="/medicaments">Gérer mes médicaments</a>
+  </div>
+
+  <ion-list *ngIf="!chargement && rappels.length > 0">
+    <ion-item *ngFor="let rappel of rappels" (click)="changerStatut(rappel)" button>
+      <ion-label>
+        <h2>{{ rappel.heure }} — {{ nomMedicament(rappel) }}</h2>
+        <span [class]="classeBadge(rappel.statut)">{{ libelleStatut(rappel.statut) }}</span>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

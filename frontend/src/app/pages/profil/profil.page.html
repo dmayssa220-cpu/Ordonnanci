@@ -3,9 +3,23 @@
     <ion-title>Mon profil</ion-title>
   </ion-toolbar>
 </ion-header>
-
+<div class="ion-margin-top">
+  <ion-button expand="block" fill="outline" routerLink="/rappels">Mes rappels du jour</ion-button>
+  <ion-button expand="block" fill="outline" routerLink="/medicaments">Mes médicaments</ion-button>
+</div>
 <ion-content class="ion-padding">
-  <div class="odonnanci-auth-container" *ngIf="!chargement">
+  <div class="ion-text-center ion-padding" *ngIf="chargement">
+    <ion-spinner></ion-spinner>
+    <p>Chargement du profil...</p>
+  </div>
+
+  <div class="ion-text-center ion-padding" *ngIf="!chargement && erreurChargement">
+    <p>Impossible de charger ton profil. Vérifie que le backend tourne et que tu es bien connecté.</p>
+    <ion-button (click)="chargerProfil()">Réessayer</ion-button>
+    <ion-button fill="clear" color="danger" (click)="seDeconnecter()">Se déconnecter</ion-button>
+  </div>
+
+  <div class="odonnanci-auth-container" *ngIf="!chargement && !erreurChargement">
     <ion-badge color="secondary" *ngIf="utilisateur">{{ utilisateur.role }}</ion-badge>
 
     <form [formGroup]="formulaire" (ngSubmit)="enregistrer()">
@@ -54,7 +68,7 @@
     </ion-button>
 
     <p class="odonnanci-lien-secondaire" *ngIf="estMedecin">
-      La gestion de tes disponibilités (pour les rendez-vous) arrivera à l'étape F4.
+      La gestion de tes disponibilités (pour les rendez-vous) .
     </p>
   </div>
 </ion-content>

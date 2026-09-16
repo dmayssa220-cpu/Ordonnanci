@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+
+import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
@@ -11,10 +12,12 @@ import {
   IonInput,
   IonButton,
   IonBadge,
+  IonSpinner,
   ToastController,
 } from '@ionic/angular';
 import { AuthService, Utilisateur } from '../../services/auth.service';
 import { ProfileService } from '../../services/profile.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-profil',
@@ -33,19 +36,24 @@ import { ProfileService } from '../../services/profile.service';
     IonInput,
     IonButton,
     IonBadge,
+    IonSpinner,
+    RouterLink,
   ],
 })
 export class ProfilPage implements OnInit {
   formulaire: FormGroup;
   utilisateur: Utilisateur | null = null;
   chargement = true;
+  erreurChargement = false;
   enregistrement = false;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private profileService: ProfileService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef
   ) {
     this.formulaire = this.fb.group({
       nom: ['', Validators.required],
@@ -68,21 +76,36 @@ export class ProfilPage implements OnInit {
   }
 
   chargerProfil() {
+    console.log('========== CHARGEMENT PROFIL ==========');
+    this.chargement = true;
+    this.erreurChargement = false;
+
     this.profileService.getMonProfil().subscribe({
-      next: ({ utilisateur, profil }) => {
-        this.utilisateur = utilisateur as Utilisateur;
+      next: (reponse) => {
+        console.log('PROFILE RESPONSE:', reponse);
+
+        this.utilisateur = reponse.utilisateur as Utilisateur;
         this.formulaire.patchValue({
-          nom: utilisateur['nom'],
-          prenom: utilisateur['prenom'],
-          telephone: utilisateur['telephone'] || '',
-          allergies: profil?.['allergies']?.join(', ') || '',
-          antecedents: profil?.['antecedents']?.join(', ') || '',
-          specialite: profil?.['specialite'] || '',
-          lieuExercice: profil?.['lieuExercice'] || '',
+          nom: reponse.utilisateur['nom'] || '',
+          prenom: reponse.utilisateur['prenom'] || '',
+          telephone: reponse.utilisateur['telephone'] || '',
+          allergies: reponse.profil?.['allergies']?.join(', ') || '',
+          antecedents: reponse.profil?.['antecedents']?.join(', ') || '',
+          specialite: reponse.profil?.['specialite'] || '',
+          lieuExercice: reponse.profil?.['lieuExercice'] || '',
         });
         this.chargement = false;
+
+        console.log('chargement =', this.chargement, '— forçage détectChanges() maintenant');
+        this.cdr.detectChanges();
+        console.log('detectChanges() exécuté');
       },
-      error: () => (this.chargement = false),
+      error: (erreur) => {
+        console.error('PROFILE ERROR:', erreur);
+        this.chargement = false;
+        this.erreurChargement = true;
+        this.cdr.detectChanges();
+      },
     });
   }
 
@@ -111,6 +134,7 @@ export class ProfilPage implements OnInit {
     this.profileService.mettreAJourProfil(donnees).subscribe({
       next: async () => {
         this.enregistrement = false;
+        this.cdr.detectChanges();
         const toast = await this.toastController.create({
           message: 'Profil mis à jour',
           duration: 1500,
@@ -118,7 +142,10 @@ export class ProfilPage implements OnInit {
         });
         await toast.present();
       },
-      error: () => (this.enregistrement = false),
+      error: () => {
+        this.enregistrement = false;
+        this.cdr.detectChanges();
+      },
     });
   }
 
@@ -127,3 +154,5 @@ export class ProfilPage implements OnInit {
     window.location.href = '/connexion';
   }
 }
+
+

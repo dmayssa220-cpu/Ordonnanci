@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/profil"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mes médicaments</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="ion-text-center ion-padding" *ngIf="chargement">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <div class="ion-padding" *ngIf="!chargement && medicaments.length === 0">
+    <p>Aucun médicament enregistré pour l'instant.</p>
+  </div>
+
+  <ion-list *ngIf="!chargement && medicaments.length > 0">
+    <ion-item *ngFor="let medicament of medicaments">
+      <ion-label>
+        <h2>{{ medicament.nom }} — {{ medicament.dosage }}</h2>
+        <p>{{ medicament.frequence }}</p>
+        <span
+          class="odonnanci-badge odonnanci-badge--succes"
+          *ngIf="observances[medicament._id] !== null && observances[medicament._id] !== undefined"
+        >
+          Observance : {{ observances[medicament._id] }}%
+        </span>
+      </ion-label>
+      <ion-button fill="clear" color="danger" slot="end" (click)="confirmerSuppression(medicament)">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="allerAjouter()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

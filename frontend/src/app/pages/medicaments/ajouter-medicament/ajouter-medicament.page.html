@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="annuler()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Ajouter un médicament</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="formulaire" (ngSubmit)="enregistrer()">
+    <ion-item>
+      <ion-label position="stacked">Nom du médicament</ion-label>
+      <ion-input formControlName="nom"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Dosage</ion-label>
+      <ion-input formControlName="dosage" placeholder="ex. 1000mg"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Fréquence</ion-label>
+      <ion-input formControlName="frequence" placeholder="ex. 3 fois par jour"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Date de début</ion-label>
+      <ion-input type="date" formControlName="dateDebut"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Date de fin (optionnel)</ion-label>
+      <ion-input type="date" formControlName="dateFin"></ion-input>
+    </ion-item>
+
+    <h3 class="odonnanci-headline ion-padding-top">Heures de prise</h3>
+    <div formArrayName="heuresPrise">
+      <ion-item *ngFor="let heure of heuresPrise.controls; let i = index">
+        <ion-input type="time" [formControlName]="i"></ion-input>
+        <ion-button
+          fill="clear"
+          color="danger"
+          slot="end"
+          (click)="retirerHeure(i)"
+          *ngIf="heuresPrise.length > 1"
+        >
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </div>
+    <ion-button fill="outline" size="small" (click)="ajouterHeure()">
+      <ion-icon name="add-outline" slot="start"></ion-icon>
+      Ajouter une heure
+    </ion-button>
+
+    <ion-text color="danger" *ngIf="erreur">
+      <p class="odonnanci-erreur-champ">{{ erreur }}</p>
+    </ion-text>
+
+    <ion-button expand="block" type="submit" [disabled]="chargement" class="ion-margin-top">
+      {{ chargement ? 'Enregistrement...' : 'Enregistrer' }}
+    </ion-button>
+  </form>
+</ion-content>
