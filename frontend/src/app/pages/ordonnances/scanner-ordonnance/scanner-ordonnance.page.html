@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/medicaments"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Scanner une ordonnance</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding ion-text-center">
+  <div class="odonnanci-scanner-zone">
+    <img *ngIf="photoApercu" [src]="photoApercu" class="odonnanci-apercu" alt="Aperçu de l'ordonnance" />
+
+    <ion-spinner *ngIf="envoiEnCours"></ion-spinner>
+    <p *ngIf="envoiEnCours">Analyse de l'ordonnance en cours (OCR + IA)...</p>
+
+    <ion-text color="danger" *ngIf="erreur">
+      <p>{{ erreur }}</p>
+    </ion-text>
+
+    <ion-button expand="block" (click)="prendrePhoto()" [disabled]="envoiEnCours" *ngIf="!photoApercu || erreur">
+      <ion-icon name="camera-outline" slot="start"></ion-icon>
+      Photographier avec la caméra
+    </ion-button>
+
+    <input
+      #fichierOrdonnance
+      type="file"
+      accept="image/*"
+      (change)="choisirOrdonnance($event)"
+      hidden
+    />
+    <ion-button
+      expand="block"
+      fill="outline"
+      (click)="fichierOrdonnance.click()"
+      [disabled]="envoiEnCours"
+      *ngIf="!photoApercu || erreur"
+    >
+      Choisir une ordonnance sur l'appareil
+    </ion-button>
+
+    <p class="odonnanci-lien-secondaire">
+      La reconnaissance automatique peut se tromper — tu pourras vérifier et corriger chaque médicament avant
+      validation.
+    </p>
+  </div>
+</ion-content>

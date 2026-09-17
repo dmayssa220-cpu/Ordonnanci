@@ -1,0 +1,77 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/medicaments"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Vérifier l'ordonnance</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="ion-text-center ion-padding" *ngIf="chargement">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <div *ngIf="!chargement && prescription">
+    <p class="odonnanci-lien-secondaire">
+      Vérifie et corrige chaque médicament détecté avant de valider — la reconnaissance automatique n'est pas
+      toujours parfaite.
+    </p>
+
+    <form [formGroup]="formulaire" (ngSubmit)="valider()">
+      <div formArrayName="medicaments">
+        <div
+          *ngFor="let med of medicaments.controls; let i = index"
+          [formGroupName]="i"
+          class="odonnanci-ligne-medicament"
+        >
+          <ion-item>
+            <ion-label position="stacked">Nom</ion-label>
+            <ion-input formControlName="nom" (ionInput)="marquerModifie()"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Dosage</ion-label>
+            <ion-input formControlName="dosage" (ionInput)="marquerModifie()"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Fréquence</ion-label>
+            <ion-input formControlName="frequence" (ionInput)="marquerModifie()"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Heures de prise (séparées par des virgules)</ion-label>
+            <ion-input
+              formControlName="heuresPrise"
+              placeholder="ex. 08:00,20:00"
+              (ionInput)="marquerModifie()"
+            ></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Date de début</ion-label>
+            <ion-input type="date" formControlName="dateDebut" (ionInput)="marquerModifie()"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Date de fin (optionnel)</ion-label>
+            <ion-input type="date" formControlName="dateFin" (ionInput)="marquerModifie()"></ion-input>
+          </ion-item>
+          <ion-button fill="clear" color="danger" size="small" (click)="retirerLigne(i)">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Retirer ce médicament
+          </ion-button>
+        </div>
+      </div>
+
+      <ion-button fill="outline" size="small" (click)="ajouterLigne()">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Ajouter un médicament manuellement
+      </ion-button>
+
+      <ion-text color="danger" *ngIf="erreur">
+        <p class="odonnanci-erreur-champ">{{ erreur }}</p>
+      </ion-text>
+
+      <ion-button expand="block" type="submit" [disabled]="enregistrement" class="ion-margin-top">
+        {{ enregistrement ? 'Validation...' : 'Valider et créer les rappels' }}
+      </ion-button>
+    </form>
+  </div>
+</ion-content>

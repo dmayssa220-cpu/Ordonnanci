@@ -1,0 +1,16 @@
+.odonnanci-ligne-medicament {
+  border: 1px solid rgba(22, 48, 43, 0.08);
+  border-radius: var(--odonnanci-radius-card);
+  padding: var(--odonnanci-space-sm);
+  margin-bottom: var(--odonnanci-space-md);
+}
+
+.odonnanci-lien-secondaire {
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+}
+
+.odonnanci-erreur-champ {
+  margin: 0 0 var(--odonnanci-space-sm) 0;
+  font-size: 0.85rem;
+}

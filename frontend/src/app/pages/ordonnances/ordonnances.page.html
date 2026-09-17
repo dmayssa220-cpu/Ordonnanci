@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/profil"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mes ordonnances</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="ion-text-center ion-padding" *ngIf="chargement">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <div class="ion-padding" *ngIf="!chargement && prescriptions.length === 0">
+    <p>Aucune ordonnance scannée pour l'instant.</p>
+  </div>
+
+  <ion-list *ngIf="!chargement && prescriptions.length > 0">
+    <ion-item
+      *ngFor="let p of prescriptions"
+      [routerLink]="p.statutValidation === 'en_attente' ? ['/ordonnances', p._id, 'valider'] : null"
+      [button]="p.statutValidation === 'en_attente'"
+    >
+      <ion-label>
+        <h2>{{ formatDate(p.createdAt) }}</h2>
+        <p>{{ p.medicamentsDetectes.length }} médicament(s) détecté(s)</p>
+        <span [class]="classeBadge(p.statutValidation)">{{ libelleStatut(p.statutValidation) }}</span>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button routerLink="/ordonnances/scanner">
+      <ion-icon name="camera-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

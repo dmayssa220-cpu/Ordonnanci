@@ -1,0 +1,17 @@
+.odonnanci-scanner-zone {
+  max-width: 420px;
+  margin: 0 auto;
+  padding-top: var(--odonnanci-space-xl);
+}
+
+.odonnanci-apercu {
+  max-width: 100%;
+  border-radius: var(--odonnanci-radius-card);
+  margin-bottom: var(--odonnanci-space-md);
+}
+
+.odonnanci-lien-secondaire {
+  color: var(--ion-color-medium);
+  font-size: 0.85rem;
+  margin-top: var(--odonnanci-space-lg);
+}
