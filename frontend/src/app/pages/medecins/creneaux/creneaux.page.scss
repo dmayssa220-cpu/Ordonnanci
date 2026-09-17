@@ -1,0 +1,11 @@
+.odonnanci-creneaux {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--odonnanci-space-sm);
+  margin: var(--odonnanci-space-md) 0;
+}
+
+.odonnanci-erreur-champ {
+  margin: 0 0 var(--odonnanci-space-sm) 0;
+  font-size: 0.85rem;
+}

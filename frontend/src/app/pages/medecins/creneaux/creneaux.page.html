@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/medecins"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ reporterId ? 'Reporter le rendez-vous' : 'Prendre rendez-vous' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-label position="stacked">Date</ion-label>
+    <ion-input type="date" [(ngModel)]="date" (ngModelChange)="chargerCreneaux()"></ion-input>
+  </ion-item>
+
+  <ion-item *ngIf="!reporterId">
+    <ion-label position="stacked">Motif (optionnel)</ion-label>
+    <ion-input [(ngModel)]="motif" placeholder="ex. Consultation de suivi"></ion-input>
+  </ion-item>
+
+  <div class="ion-text-center ion-padding" *ngIf="chargement">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <div *ngIf="!chargement">
+    <p *ngIf="creneaux.length === 0">Aucun créneau disponible ce jour-là.</p>
+    <div class="odonnanci-creneaux">
+      <ion-chip
+        *ngFor="let creneau of creneaux"
+        [color]="creneau === creneauSelectionne ? 'primary' : 'medium'"
+        [outline]="creneau !== creneauSelectionne"
+        (click)="selectionner(creneau)"
+      >
+        {{ creneau }}
+      </ion-chip>
+    </div>
+  </div>
+
+  <ion-text color="danger" *ngIf="erreur">
+    <p class="odonnanci-erreur-champ">{{ erreur }}</p>
+  </ion-text>
+
+  <ion-button
+    expand="block"
+    class="ion-margin-top"
+    [disabled]="!creneauSelectionne || enregistrement"
+    (click)="confirmer()"
+  >
+    {{ enregistrement ? 'Enregistrement...' : reporterId ? 'Confirmer le report' : 'Confirmer le rendez-vous' }}
+  </ion-button>
+</ion-content>

@@ -1,13 +1,42 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>rendez-vous</ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/profil"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mes rendez-vous</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">rendez-vous</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <div class="ion-text-center ion-padding" *ngIf="chargement">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <div class="ion-padding" *ngIf="!chargement && rdvs.length === 0">
+    <p>Aucun rendez-vous pour l'instant.</p>
+    <a routerLink="/medecins" *ngIf="!estMedecin">Trouver un médecin</a>
+  </div>
+
+  <ion-list *ngIf="!chargement && rdvs.length > 0">
+    <ion-item *ngFor="let rdv of rdvs">
+      <ion-label>
+        <h2>{{ nomAutrePartie(rdv) }}</h2>
+        <p>{{ formatDate(rdv.date) }}<span *ngIf="rdv.motif"> — {{ rdv.motif }}</span></p>
+        <span [class]="classeBadge(rdv.statut)">{{ rdv.statut }}</span>
+      </ion-label>
+      <div slot="end" *ngIf="rdv.statut === 'confirme'">
+        <ion-button *ngIf="!estMedecin" fill="clear" size="small" (click)="reporter(rdv)">Reporter</ion-button>
+        <ion-button fill="clear" size="small" color="danger" (click)="annuler(rdv)">Annuler</ion-button>
+        <ion-button *ngIf="estMedecin" fill="clear" size="small" color="success" (click)="terminer(rdv)"
+          >Terminer</ion-button
+        >
+      </div>
+    </ion-item>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="!estMedecin">
+    <ion-fab-button routerLink="/medecins">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

@@ -3,10 +3,7 @@
     <ion-title>Mon profil</ion-title>
   </ion-toolbar>
 </ion-header>
-<div class="ion-margin-top">
-  <ion-button expand="block" fill="outline" routerLink="/rappels">Mes rappels du jour</ion-button>
-  <ion-button expand="block" fill="outline" routerLink="/medicaments">Mes médicaments</ion-button>
-</div>
+
 <ion-content class="ion-padding">
   <div class="ion-text-center ion-padding" *ngIf="chargement">
     <ion-spinner></ion-spinner>
@@ -56,6 +53,28 @@
           <ion-label position="stacked">Lieu d'exercice</ion-label>
           <ion-input formControlName="lieuExercice"></ion-input>
         </ion-item>
+
+        <h3 class="odonnanci-headline ion-padding-top">Mes disponibilités</h3>
+        <p class="odonnanci-lien-secondaire" *ngIf="disponibilites.length === 0">
+          Aucune disponibilité déclarée — les patients ne pourront pas te trouver de créneau.
+        </p>
+
+        <div formArrayName="disponibilites">
+          <ion-item *ngFor="let dispo of disponibilites.controls; let i = index" [formGroupName]="i">
+            <ion-select formControlName="jour" interface="popover" label="Jour">
+              <ion-select-option *ngFor="let j of jours" [value]="j">{{ j }}</ion-select-option>
+            </ion-select>
+            <ion-input type="time" formControlName="heureDebut"></ion-input>
+            <ion-input type="time" formControlName="heureFin"></ion-input>
+            <ion-button fill="clear" color="danger" slot="end" (click)="retirerDisponibilite(i)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </div>
+        <ion-button fill="outline" size="small" (click)="ajouterDisponibilite()">
+          <ion-icon name="add-outline" slot="start"></ion-icon>
+          Ajouter une disponibilité
+        </ion-button>
       </ng-container>
 
       <ion-button expand="block" type="submit" [disabled]="enregistrement" class="ion-margin-top">
@@ -63,12 +82,21 @@
       </ion-button>
     </form>
 
+    <div class="ion-margin-top">
+      <ion-button expand="block" fill="outline" routerLink="/rendez-vous">Mes rendez-vous</ion-button>
+      <ion-button expand="block" fill="outline" routerLink="/medecins" *ngIf="!estMedecin"
+        >Trouver un médecin</ion-button
+      >
+      <ion-button expand="block" fill="outline" routerLink="/rappels" *ngIf="!estMedecin"
+        >Mes rappels du jour</ion-button
+      >
+      <ion-button expand="block" fill="outline" routerLink="/medicaments" *ngIf="!estMedecin"
+        >Mes médicaments</ion-button
+      >
+    </div>
+
     <ion-button expand="block" fill="outline" color="danger" (click)="seDeconnecter()" class="ion-margin-top">
       Se déconnecter
     </ion-button>
-
-    <p class="odonnanci-lien-secondaire" *ngIf="estMedecin">
-      La gestion de tes disponibilités (pour les rendez-vous) .
-    </p>
   </div>
 </ion-content>

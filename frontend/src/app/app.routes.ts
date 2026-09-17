@@ -36,6 +36,23 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/rappels/rappels.page').then((m) => m.RappelsPage),
     canActivate: [AuthGuard],
   },
+  {
+    path: 'rendez-vous',
+    loadComponent: () =>
+      import('./pages/rendez-vous/rendez-vous.page').then((m) => m.RendezVousPage),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'medecins',
+    loadComponent: () => import('./pages/medecins/medecins.page').then((m) => m.MedecinsPage),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'medecins/:id/creneaux',
+    loadComponent: () =>
+      import('./pages/medecins/creneaux/creneaux.page').then((m) => m.CreneauxPage),
+    canActivate: [AuthGuard],
+  },
 
   
   { path: 'patient/dashboard', redirectTo: 'profil' },
@@ -44,6 +61,4 @@ export const routes: Routes = [
 
   
   { path: '**', redirectTo: 'connexion' },
-
-
 ];

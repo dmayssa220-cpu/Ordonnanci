@@ -1,7 +1,13 @@
-
-import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   IonContent,
   IonHeader,
@@ -13,11 +19,15 @@ import {
   IonButton,
   IonBadge,
   IonSpinner,
+  IonSelect,
+  IonSelectOption,
+  IonIcon,
   ToastController,
 } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { addOutline, trashOutline } from 'ionicons/icons';
 import { AuthService, Utilisateur } from '../../services/auth.service';
 import { ProfileService } from '../../services/profile.service';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-profil',
@@ -27,6 +37,7 @@ import { RouterLink } from '@angular/router';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterLink,
     IonContent,
     IonHeader,
     IonToolbar,
@@ -37,7 +48,9 @@ import { RouterLink } from '@angular/router';
     IonButton,
     IonBadge,
     IonSpinner,
-    RouterLink,
+    IonSelect,
+    IonSelectOption,
+    IonIcon,
   ],
 })
 export class ProfilPage implements OnInit {
@@ -46,15 +59,17 @@ export class ProfilPage implements OnInit {
   chargement = true;
   erreurChargement = false;
   enregistrement = false;
+  jours = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private profileService: ProfileService,
     private toastController: ToastController,
-    private ngZone: NgZone,
     private cdr: ChangeDetectorRef
   ) {
+    addIcons({ addOutline, trashOutline });
+
     this.formulaire = this.fb.group({
       nom: ['', Validators.required],
       prenom: ['', Validators.required],
@@ -63,11 +78,16 @@ export class ProfilPage implements OnInit {
       antecedents: [''],
       specialite: [''],
       lieuExercice: [''],
+      disponibilites: this.fb.array([]),
     });
   }
 
   get estMedecin(): boolean {
     return this.utilisateur?.role === 'medecin';
+  }
+
+  get disponibilites(): FormArray {
+    return this.formulaire.get('disponibilites') as FormArray;
   }
 
   ngOnInit() {
@@ -76,14 +96,11 @@ export class ProfilPage implements OnInit {
   }
 
   chargerProfil() {
-    console.log('========== CHARGEMENT PROFIL ==========');
     this.chargement = true;
     this.erreurChargement = false;
 
     this.profileService.getMonProfil().subscribe({
       next: (reponse) => {
-        console.log('PROFILE RESPONSE:', reponse);
-
         this.utilisateur = reponse.utilisateur as Utilisateur;
         this.formulaire.patchValue({
           nom: reponse.utilisateur['nom'] || '',
@@ -94,19 +111,42 @@ export class ProfilPage implements OnInit {
           specialite: reponse.profil?.['specialite'] || '',
           lieuExercice: reponse.profil?.['lieuExercice'] || '',
         });
-        this.chargement = false;
 
-        console.log('chargement =', this.chargement, '— forçage détectChanges() maintenant');
+        this.disponibilites.clear();
+        const dispos = reponse.profil?.['disponibilites'] || [];
+        dispos.forEach((d: { jour: string; heureDebut: string; heureFin: string }) => {
+          this.disponibilites.push(
+            this.fb.group({
+              jour: [d.jour, Validators.required],
+              heureDebut: [d.heureDebut, Validators.required],
+              heureFin: [d.heureFin, Validators.required],
+            })
+          );
+        });
+
+        this.chargement = false;
         this.cdr.detectChanges();
-        console.log('detectChanges() exécuté');
       },
-      error: (erreur) => {
-        console.error('PROFILE ERROR:', erreur);
+      error: () => {
         this.chargement = false;
         this.erreurChargement = true;
         this.cdr.detectChanges();
       },
     });
+  }
+
+  ajouterDisponibilite() {
+    this.disponibilites.push(
+      this.fb.group({
+        jour: ['lundi', Validators.required],
+        heureDebut: ['09:00', Validators.required],
+        heureFin: ['17:00', Validators.required],
+      })
+    );
+  }
+
+  retirerDisponibilite(index: number) {
+    this.disponibilites.removeAt(index);
   }
 
   enregistrer() {
@@ -122,6 +162,7 @@ export class ProfilPage implements OnInit {
     if (this.estMedecin) {
       donnees['specialite'] = valeurs.specialite;
       donnees['lieuExercice'] = valeurs.lieuExercice;
+      donnees['disponibilites'] = valeurs.disponibilites;
     } else {
       donnees['allergies'] = valeurs.allergies
         ? valeurs.allergies.split(',').map((a: string) => a.trim())
@@ -154,5 +195,3 @@ export class ProfilPage implements OnInit {
     window.location.href = '/connexion';
   }
 }
-
-

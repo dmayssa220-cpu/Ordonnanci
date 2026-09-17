@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/profil"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Trouver un médecin</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-label position="stacked">Spécialité</ion-label>
+    <ion-input
+      [(ngModel)]="recherche"
+      (keyup.enter)="rechercher()"
+      placeholder="ex. Cardiologie (laisser vide pour tout voir)"
+    ></ion-input>
+  </ion-item>
+  <ion-button expand="block" (click)="rechercher()">Rechercher</ion-button>
+
+  <div class="ion-text-center ion-padding" *ngIf="chargement">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <ion-list *ngIf="!chargement">
+    <ion-item *ngFor="let medecin of medecins" button (click)="voirCreneaux(medecin)">
+      <ion-label>
+        <h2>Dr {{ medecin.userId.prenom }} {{ medecin.userId.nom }}</h2>
+        <p>
+          {{ medecin.specialite }}
+          <span *ngIf="medecin.lieuExercice"> — {{ medecin.lieuExercice }}</span>
+        </p>
+      </ion-label>
+    </ion-item>
+    <ion-item *ngIf="medecins.length === 0">
+      <ion-label>Aucun médecin trouvé.</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
