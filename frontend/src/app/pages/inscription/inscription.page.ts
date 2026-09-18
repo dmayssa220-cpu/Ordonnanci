@@ -71,9 +71,8 @@ export class InscriptionPage {
     this.authService.inscription(this.formulaire.value).subscribe({
       next: (reponse) => {
         this.chargement = false;
-        this.router.navigateByUrl(
-          reponse.user.role === 'medecin' ? '/medecin/dashboard' : '/patient/dashboard'
-        );
+        // Redirection directe vers /profil, même raison que dans ConnexionPage.
+        this.router.navigateByUrl(reponse.user.role === 'medecin' ? '/dashboard-medecin' : '/dashboard-patient');
       },
       error: (err) => {
         this.chargement = false;

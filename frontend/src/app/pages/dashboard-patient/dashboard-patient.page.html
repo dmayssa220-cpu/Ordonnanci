@@ -1,0 +1,73 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Bonjour</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/notifications">
+        <ion-icon name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="ion-text-center ion-padding" *ngIf="chargement">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <div *ngIf="!chargement && dashboard">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Observance globale</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p *ngIf="dashboard.tauxObservanceGlobal !== null" class="odonnanci-observance">
+          {{ dashboard.tauxObservanceGlobal }}%
+        </p>
+        <p *ngIf="dashboard.tauxObservanceGlobal === null">Pas encore de données d'observance.</p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Traitements en cours</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list *ngIf="dashboard.traitementsEnCours.length > 0">
+          <ion-item *ngFor="let m of dashboard.traitementsEnCours" routerLink="/medicaments">
+            <ion-label>{{ m.nom }} — {{ m.dosage }}</ion-label>
+          </ion-item>
+        </ion-list>
+        <p *ngIf="dashboard.traitementsEnCours.length === 0">Aucun traitement en cours.</p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Prochains rendez-vous</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list *ngIf="dashboard.prochainsRendezVous.length > 0">
+          <ion-item *ngFor="let rdv of dashboard.prochainsRendezVous" routerLink="/rendez-vous">
+            <ion-label>
+              Dr {{ rdv.medecinId?.prenom }} {{ rdv.medecinId?.nom }} — {{ formatDateRdv(rdv.date) }}
+            </ion-label>
+          </ion-item>
+        </ion-list>
+        <p *ngIf="dashboard.prochainsRendezVous.length === 0">Aucun rendez-vous à venir.</p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-button expand="block" fill="outline" (click)="telechargerPdf()">
+      <ion-icon name="download-outline" slot="start"></ion-icon>
+      Télécharger mon historique (PDF)
+    </ion-button>
+
+    <div class="ion-margin-top">
+      <ion-button expand="block" fill="clear" routerLink="/rappels">Mes rappels du jour</ion-button>
+      <ion-button expand="block" fill="clear" routerLink="/medicaments">Mes médicaments</ion-button>
+      <ion-button expand="block" fill="clear" routerLink="/medecins">Trouver un médecin</ion-button>
+      <ion-button expand="block" fill="clear" routerLink="/ordonnances">Mes ordonnances</ion-button>
+      <ion-button expand="block" fill="clear" routerLink="/profil">Mon profil</ion-button>
+    </div>
+  </div>
+</ion-content>

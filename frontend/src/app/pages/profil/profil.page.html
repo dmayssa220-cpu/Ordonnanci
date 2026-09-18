@@ -83,6 +83,13 @@
     </form>
 
     <div class="ion-margin-top">
+      <ion-button
+        expand="block"
+        fill="solid"
+        [routerLink]="estMedecin ? '/dashboard-medecin' : '/dashboard-patient'"
+        >Retour au tableau de bord</ion-button
+      >
+      <ion-button expand="block" fill="outline" routerLink="/notifications">Notifications</ion-button>
       <ion-button expand="block" fill="outline" routerLink="/rendez-vous">Mes rendez-vous</ion-button>
       <ion-button expand="block" fill="outline" routerLink="/medecins" *ngIf="!estMedecin"
         >Trouver un médecin</ion-button
@@ -90,9 +97,11 @@
       <ion-button expand="block" fill="outline" routerLink="/rappels" *ngIf="!estMedecin"
         >Mes rappels du jour</ion-button
       >
-      <ion-button expand="block" fill="outline" routerLink="/ordonnances" *ngIf="!estMedecin">Mes ordonnances</ion-button>
       <ion-button expand="block" fill="outline" routerLink="/medicaments" *ngIf="!estMedecin"
         >Mes médicaments</ion-button
+      >
+      <ion-button expand="block" fill="outline" routerLink="/ordonnances" *ngIf="!estMedecin"
+        >Mes ordonnances</ion-button
       >
     </div>
 

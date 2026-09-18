@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Mon agenda</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/notifications">
+        <ion-icon name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="ion-text-center ion-padding" *ngIf="chargement">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <div *ngIf="!chargement && dashboard">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Aujourd'hui — {{ dashboard.agendaDuJour.length }} rendez-vous</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list *ngIf="dashboard.agendaDuJour.length > 0">
+          <ion-item *ngFor="let rdv of dashboard.agendaDuJour" routerLink="/rendez-vous">
+            <ion-label>
+              {{ formatHeure(rdv.date) }} — {{ rdv.patientId?.prenom }} {{ rdv.patientId?.nom }}
+            </ion-label>
+          </ion-item>
+        </ion-list>
+        <p *ngIf="dashboard.agendaDuJour.length === 0">Aucun rendez-vous aujourd'hui.</p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{ dashboard.nombrePatients }} patient(s) suivi(s)</ion-card-title>
+      </ion-card-header>
+    </ion-card>
+
+    <ion-card *ngIf="dashboard.alertesInobservance.length > 0">
+      <ion-card-header>
+        <ion-card-title>Alertes d'inobservance</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let alerte of dashboard.alertesInobservance">
+            <ion-label>{{ alerte.patient.prenom }} {{ alerte.patient.nom }}</ion-label>
+            <ion-badge color="danger" slot="end">{{ alerte.tauxObservance }}%</ion-badge>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="ion-margin-top">
+      <ion-button expand="block" fill="clear" routerLink="/rendez-vous">Tous mes rendez-vous</ion-button>
+      <ion-button expand="block" fill="clear" routerLink="/profil">Mon profil</ion-button>
+    </div>
+  </div>
+</ion-content>

@@ -82,8 +82,8 @@ export class ConnexionPage {
   }
 
   private rediriger(role: string) {
-    if (role === 'medecin') this.router.navigateByUrl('/medecin/dashboard');
-    else if (role === 'admin') this.router.navigateByUrl('/admin/dashboard');
-    else this.router.navigateByUrl('/patient/dashboard');
+    if (role === 'medecin') this.router.navigateByUrl('/dashboard-medecin');
+    else if (role === 'admin') this.router.navigateByUrl('/admin');
+    else this.router.navigateByUrl('/dashboard-patient');
   }
 }

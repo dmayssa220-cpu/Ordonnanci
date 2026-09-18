@@ -1,0 +1,53 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/profil"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Notifications</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="marquerToutLu()">Tout marquer lu</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="ion-text-center ion-padding" *ngIf="chargement">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <ion-list *ngIf="!chargement">
+    <ion-item *ngFor="let n of notifications" (click)="marquerLue(n)" button [color]="n.lu ? '' : 'light'">
+      <ion-label class="ion-text-wrap">
+        <p>{{ n.message }}</p>
+      </ion-label>
+    </ion-item>
+    <ion-item *ngIf="notifications.length === 0">
+      <ion-label>Aucune notification.</ion-label>
+    </ion-item>
+  </ion-list>
+
+  <div class="ion-padding">
+    <h3 class="odonnanci-headline">Préférences</h3>
+    <ion-item>
+      <ion-label>Rappels de médicaments</ion-label>
+      <ion-toggle
+        [(ngModel)]="prefs.rappelsMedicaments"
+        (ionChange)="changerPreference('rappelsMedicaments', prefs.rappelsMedicaments)"
+      ></ion-toggle>
+    </ion-item>
+    <ion-item>
+      <ion-label>Rappels de rendez-vous</ion-label>
+      <ion-toggle
+        [(ngModel)]="prefs.rappelsRendezVous"
+        (ionChange)="changerPreference('rappelsRendezVous', prefs.rappelsRendezVous)"
+      ></ion-toggle>
+    </ion-item>
+    <ion-item>
+      <ion-label>Messages</ion-label>
+      <ion-toggle
+        [(ngModel)]="prefs.messages"
+        (ionChange)="changerPreference('messages', prefs.messages)"
+      ></ion-toggle>
+    </ion-item>
+  </div>
+</ion-content>

@@ -1,0 +1,102 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Administration</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [value]="vue" (ionChange)="changerVue($any($event.detail.value))">
+      <ion-segment-button value="statistiques">
+        <ion-label>Stats</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="utilisateurs">
+        <ion-label>Utilisateurs</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="referentiel">
+        <ion-label>Référentiel</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="ion-text-center ion-padding" *ngIf="chargement">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <div *ngIf="!chargement && vue === 'statistiques' && statistiques">
+    <ion-list>
+      <ion-item>
+        <ion-label>Patients</ion-label>
+        <ion-badge slot="end">{{ statistiques.utilisateurs.nombrePatients }}</ion-badge>
+      </ion-item>
+      <ion-item>
+        <ion-label>Médecins</ion-label>
+        <ion-badge slot="end">{{ statistiques.utilisateurs.nombreMedecins }}</ion-badge>
+      </ion-item>
+      <ion-item>
+        <ion-label>Comptes actifs</ion-label>
+        <ion-badge slot="end">{{ statistiques.utilisateurs.nombreComptesActifs }}</ion-badge>
+      </ion-item>
+      <ion-item>
+        <ion-label>Rendez-vous (total)</ion-label>
+        <ion-badge slot="end">{{ statistiques.nombreRendezVous }}</ion-badge>
+      </ion-item>
+      <ion-item>
+        <ion-label>Ordonnances analysées</ion-label>
+        <ion-badge slot="end">{{ statistiques.prescriptions.nombrePrescriptions }}</ion-badge>
+      </ion-item>
+      <ion-item>
+        <ion-label>Taux de réussite OCR</ion-label>
+        <ion-badge slot="end">{{ statistiques.prescriptions.tauxReussiteOCR ?? '—' }}%</ion-badge>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div *ngIf="!chargement && vue === 'utilisateurs'">
+    <ion-list>
+      <ion-item *ngFor="let u of utilisateurs">
+        <ion-label>
+          <h2>
+            {{ u.prenom }} {{ u.nom }}
+            <ion-badge [color]="u.estActif ? 'success' : 'danger'">{{
+              u.estActif ? 'actif' : 'suspendu'
+            }}</ion-badge>
+          </h2>
+          <p>{{ u.email }} — {{ u.role }}</p>
+        </ion-label>
+        <ion-button fill="clear" slot="end" (click)="toggleStatut(u)">
+          {{ u.estActif ? 'Suspendre' : 'Réactiver' }}
+        </ion-button>
+        <ion-button fill="clear" color="danger" slot="end" (click)="supprimerUtilisateur(u)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div *ngIf="!chargement && vue === 'referentiel'">
+    <ion-item>
+      <ion-label position="stacked">Nom du médicament</ion-label>
+      <ion-input [(ngModel)]="nouveauMedicamentNom"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Dosages disponibles (séparés par virgule)</ion-label>
+      <ion-input [(ngModel)]="nouveauMedicamentDosages" placeholder="ex. 500mg,1000mg"></ion-input>
+    </ion-item>
+    <ion-button expand="block" (click)="ajouterMedicamentReferentiel()">
+      <ion-icon name="add-outline" slot="start"></ion-icon>
+      Ajouter au référentiel
+    </ion-button>
+
+    <ion-list class="ion-margin-top">
+      <ion-item *ngFor="let m of referentiel">
+        <ion-label>
+          <h2>{{ m.nom }}</h2>
+          <p>{{ m.dosagesDisponibles.join(', ') }}</p>
+        </ion-label>
+        <ion-button fill="clear" color="danger" slot="end" (click)="supprimerMedicamentReferentiel(m)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>
