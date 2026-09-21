@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormArray,
@@ -8,7 +8,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import {
   IonContent,
   IonHeader,
@@ -62,6 +61,7 @@ import { AvatarUrlPipe } from '../../pipes/avatar-url.pipe';
   ],
 })
 export class ProfilPage implements OnInit {
+  @ViewChild('photoInput') photoInput?: ElementRef<HTMLInputElement>;
   formulaire: FormGroup;
   utilisateur: Utilisateur | null = null;
   chargement = true;
@@ -146,52 +146,43 @@ export class ProfilPage implements OnInit {
     });
   }
 
-  async changerPhoto() {
-    try {
-      const photo = await Camera.getPhoto({
-        quality: 80,
-        resultType: CameraResultType.DataUrl,
-        source: CameraSource.Prompt,
-        promptLabelHeader: 'Photo de profil',
-        promptLabelPhoto: 'Choisir depuis la galerie',
-        promptLabelPicture: 'Prendre une photo',
-      });
-      if (!photo.dataUrl) return;
-
-      this.envoiPhotoEnCours = true;
-      this.cdr.detectChanges();
-
-      const blob = this.dataUrlVersBlob(photo.dataUrl);
-      this.profileService.uploaderAvatar(blob).subscribe({
-        next: async ({ utilisateur }) => {
-          this.envoiPhotoEnCours = false;
-          if (this.utilisateur) this.utilisateur = { ...this.utilisateur, ...utilisateur };
-          this.cdr.detectChanges();
-          const toast = await this.toastController.create({
-            message: 'Photo de profil mise à jour',
-            duration: 1500,
-            color: 'success',
-          });
-          await toast.present();
-        },
-        error: () => {
-          this.envoiPhotoEnCours = false;
-          this.cdr.detectChanges();
-        },
-      });
-    } catch {
-      // Capture annulée par l'utilisateur — rien à faire
-    }
+  changerPhoto() {
+    if (!this.envoiPhotoEnCours) this.photoInput?.nativeElement.click();
   }
 
-  private dataUrlVersBlob(dataUrl: string): Blob {
-    const [entete, base64] = dataUrl.split(',');
-    const mimeMatch = entete.match(/:(.*?);/);
-    const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg';
-    const binaire = atob(base64);
-    const tableau = new Uint8Array(binaire.length);
-    for (let i = 0; i < binaire.length; i++) tableau[i] = binaire.charCodeAt(i);
-    return new Blob([tableau], { type: mime });
+  selectionnerPhoto(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const fichier = input.files?.[0];
+    if (!fichier) return;
+
+    this.envoiPhotoEnCours = true;
+    this.cdr.detectChanges();
+
+    this.profileService.uploaderAvatar(fichier).subscribe({
+      next: async ({ utilisateur }) => {
+        this.envoiPhotoEnCours = false;
+        if (this.utilisateur) this.utilisateur = { ...this.utilisateur, ...utilisateur };
+        input.value = '';
+        this.cdr.detectChanges();
+        const toast = await this.toastController.create({
+          message: 'Photo de profil mise à jour',
+          duration: 1500,
+          color: 'success',
+        });
+        await toast.present();
+      },
+      error: async () => {
+        this.envoiPhotoEnCours = false;
+        input.value = '';
+        this.cdr.detectChanges();
+        const toast = await this.toastController.create({
+          message: "Impossible d'envoyer la photo",
+          duration: 2500,
+          color: 'danger',
+        });
+        await toast.present();
+      },
+    });
   }
 
   ajouterDisponibilite() {

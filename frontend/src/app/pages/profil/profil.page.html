@@ -30,6 +30,13 @@
 
   <div class="odonnanci-auth-container" *ngIf="!chargement && !erreurChargement">
     <div class="odonnanci-avatar-zone">
+      <input
+        #photoInput
+        type="file"
+        accept="image/*"
+        hidden
+        (change)="selectionnerPhoto($event)"
+      />
       <ion-avatar (click)="changerPhoto()">
         <img [src]="utilisateur?.photoUrl | avatarUrl" alt="Photo de profil" />
         <div class="odonnanci-avatar-overlay" *ngIf="envoiPhotoEnCours">
