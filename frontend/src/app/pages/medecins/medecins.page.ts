@@ -15,8 +15,10 @@ import {
   IonButton,
   IonList,
   IonSpinner,
+  IonAvatar,
 } from '@ionic/angular';
 import { AppointmentService, Medecin } from '../../services/appointment.service';
+import { AvatarUrlPipe } from '../../pipes/avatar-url.pipe';
 
 @Component({
   selector: 'app-medecins',
@@ -26,6 +28,7 @@ import { AppointmentService, Medecin } from '../../services/appointment.service'
   imports: [
     CommonModule,
     FormsModule,
+    AvatarUrlPipe,
     IonContent,
     IonHeader,
     IonToolbar,
@@ -38,6 +41,7 @@ import { AppointmentService, Medecin } from '../../services/appointment.service'
     IonButton,
     IonList,
     IonSpinner,
+    IonAvatar,
   ],
 })
 export class MedecinsPage implements OnInit {

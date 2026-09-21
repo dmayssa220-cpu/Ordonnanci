@@ -2,8 +2,15 @@
   <ion-toolbar color="primary">
     <ion-title>Mon agenda</ion-title>
     <ion-buttons slot="end">
-      <ion-button routerLink="/notifications">
-        <ion-icon name="notifications-outline"></ion-icon>
+      <ion-button routerLink="/notifications" class="odonnanci-bouton-notif">
+        <ion-icon name="notifications-outline" slot="icon-only"></ion-icon>
+        <ion-badge
+          color="danger"
+          class="odonnanci-badge-notif"
+          *ngIf="(notificationService.nombreNonLues$ | async) as n"
+          [hidden]="n === 0"
+          >{{ n }}</ion-badge
+        >
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

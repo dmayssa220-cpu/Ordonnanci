@@ -8,11 +8,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import {
   IonContent,
   IonHeader,
   IonToolbar,
   IonTitle,
+  IonButtons,
   IonItem,
   IonLabel,
   IonInput,
@@ -22,12 +24,15 @@ import {
   IonSelect,
   IonSelectOption,
   IonIcon,
+  IonAvatar,
   ToastController,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { addOutline, trashOutline } from 'ionicons/icons';
+import { addOutline, trashOutline, cameraOutline } from 'ionicons/icons';
 import { AuthService, Utilisateur } from '../../services/auth.service';
 import { ProfileService } from '../../services/profile.service';
+import { NotificationService } from '../../services/notification.service';
+import { AvatarUrlPipe } from '../../pipes/avatar-url.pipe';
 
 @Component({
   selector: 'app-profil',
@@ -38,10 +43,12 @@ import { ProfileService } from '../../services/profile.service';
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
+    AvatarUrlPipe,
     IonContent,
     IonHeader,
     IonToolbar,
     IonTitle,
+    IonButtons,
     IonItem,
     IonLabel,
     IonInput,
@@ -51,6 +58,7 @@ import { ProfileService } from '../../services/profile.service';
     IonSelect,
     IonSelectOption,
     IonIcon,
+    IonAvatar,
   ],
 })
 export class ProfilPage implements OnInit {
@@ -59,16 +67,18 @@ export class ProfilPage implements OnInit {
   chargement = true;
   erreurChargement = false;
   enregistrement = false;
+  envoiPhotoEnCours = false;
   jours = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private profileService: ProfileService,
+    public notificationService: NotificationService,
     private toastController: ToastController,
     private cdr: ChangeDetectorRef
   ) {
-    addIcons({ addOutline, trashOutline });
+    addIcons({ addOutline, trashOutline, cameraOutline });
 
     this.formulaire = this.fb.group({
       nom: ['', Validators.required],
@@ -93,6 +103,7 @@ export class ProfilPage implements OnInit {
   ngOnInit() {
     this.authService.utilisateur$.subscribe((u) => (this.utilisateur = u));
     this.chargerProfil();
+    this.notificationService.rafraichirCompteur();
   }
 
   chargerProfil() {
@@ -133,6 +144,54 @@ export class ProfilPage implements OnInit {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  async changerPhoto() {
+    try {
+      const photo = await Camera.getPhoto({
+        quality: 80,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Prompt,
+        promptLabelHeader: 'Photo de profil',
+        promptLabelPhoto: 'Choisir depuis la galerie',
+        promptLabelPicture: 'Prendre une photo',
+      });
+      if (!photo.dataUrl) return;
+
+      this.envoiPhotoEnCours = true;
+      this.cdr.detectChanges();
+
+      const blob = this.dataUrlVersBlob(photo.dataUrl);
+      this.profileService.uploaderAvatar(blob).subscribe({
+        next: async ({ utilisateur }) => {
+          this.envoiPhotoEnCours = false;
+          if (this.utilisateur) this.utilisateur = { ...this.utilisateur, ...utilisateur };
+          this.cdr.detectChanges();
+          const toast = await this.toastController.create({
+            message: 'Photo de profil mise à jour',
+            duration: 1500,
+            color: 'success',
+          });
+          await toast.present();
+        },
+        error: () => {
+          this.envoiPhotoEnCours = false;
+          this.cdr.detectChanges();
+        },
+      });
+    } catch {
+      // Capture annulée par l'utilisateur — rien à faire
+    }
+  }
+
+  private dataUrlVersBlob(dataUrl: string): Blob {
+    const [entete, base64] = dataUrl.split(',');
+    const mimeMatch = entete.match(/:(.*?);/);
+    const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+    const binaire = atob(base64);
+    const tableau = new Uint8Array(binaire.length);
+    for (let i = 0; i < binaire.length; i++) tableau[i] = binaire.charCodeAt(i);
+    return new Blob([tableau], { type: mime });
   }
 
   ajouterDisponibilite() {

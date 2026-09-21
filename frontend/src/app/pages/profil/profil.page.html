@@ -1,6 +1,18 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>Mon profil</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/notifications" class="odonnanci-bouton-notif">
+        <ion-icon name="notifications-outline" slot="icon-only"></ion-icon>
+        <ion-badge
+          color="danger"
+          class="odonnanci-badge-notif"
+          *ngIf="(notificationService.nombreNonLues$ | async) as n"
+          [hidden]="n === 0"
+          >{{ n }}</ion-badge
+        >
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -17,7 +29,19 @@
   </div>
 
   <div class="odonnanci-auth-container" *ngIf="!chargement && !erreurChargement">
-    <ion-badge color="secondary" *ngIf="utilisateur">{{ utilisateur.role }}</ion-badge>
+    <div class="odonnanci-avatar-zone">
+      <ion-avatar (click)="changerPhoto()">
+        <img [src]="utilisateur?.photoUrl | avatarUrl" alt="Photo de profil" />
+        <div class="odonnanci-avatar-overlay" *ngIf="envoiPhotoEnCours">
+          <ion-spinner></ion-spinner>
+        </div>
+      </ion-avatar>
+      <ion-button fill="clear" size="small" (click)="changerPhoto()" [disabled]="envoiPhotoEnCours">
+        <ion-icon name="camera-outline" slot="start"></ion-icon>
+        Changer la photo
+      </ion-button>
+      <ion-badge color="secondary" *ngIf="utilisateur">{{ utilisateur.role }}</ion-badge>
+    </div>
 
     <form [formGroup]="formulaire" (ngSubmit)="enregistrer()">
       <ion-item>
@@ -89,7 +113,6 @@
         [routerLink]="estMedecin ? '/dashboard-medecin' : '/dashboard-patient'"
         >Retour au tableau de bord</ion-button
       >
-      <ion-button expand="block" fill="outline" routerLink="/notifications">Notifications</ion-button>
       <ion-button expand="block" fill="outline" routerLink="/rendez-vous">Mes rendez-vous</ion-button>
       <ion-button expand="block" fill="outline" routerLink="/medecins" *ngIf="!estMedecin"
         >Trouver un médecin</ion-button

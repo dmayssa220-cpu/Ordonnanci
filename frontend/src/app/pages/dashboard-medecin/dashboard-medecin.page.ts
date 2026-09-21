@@ -9,6 +9,7 @@ import {
   IonButtons,
   IonButton,
   IonIcon,
+  IonBadge,
   IonCard,
   IonCardHeader,
   IonCardTitle,
@@ -17,11 +18,11 @@ import {
   IonItem,
   IonLabel,
   IonSpinner,
-  IonBadge,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { notificationsOutline } from 'ionicons/icons';
 import { DashboardService, DashboardMedecin } from '../../services/dashboard.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-dashboard-medecin',
@@ -38,6 +39,7 @@ import { DashboardService, DashboardMedecin } from '../../services/dashboard.ser
     IonButtons,
     IonButton,
     IonIcon,
+    IonBadge,
     IonCard,
     IonCardHeader,
     IonCardTitle,
@@ -46,19 +48,23 @@ import { DashboardService, DashboardMedecin } from '../../services/dashboard.ser
     IonItem,
     IonLabel,
     IonSpinner,
-    IonBadge,
   ],
 })
 export class DashboardMedecinPage implements OnInit {
   dashboard: DashboardMedecin | null = null;
   chargement = true;
 
-  constructor(private dashboardService: DashboardService, private cdr: ChangeDetectorRef) {
+  constructor(
+    private dashboardService: DashboardService,
+    public notificationService: NotificationService,
+    private cdr: ChangeDetectorRef
+  ) {
     addIcons({ notificationsOutline });
   }
 
   ngOnInit() {
     this.charger();
+    this.notificationService.rafraichirCompteur();
   }
 
   charger() {

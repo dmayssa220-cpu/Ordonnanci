@@ -18,4 +18,10 @@ export class ProfileService {
   mettreAJourProfil(donnees: Record<string, unknown>): Observable<ProfilReponse> {
     return this.api.put<ProfilReponse>('/profile/me', donnees);
   }
+
+  uploaderAvatar(blob: Blob): Observable<{ message: string; utilisateur: Record<string, any> }> {
+    const formData = new FormData();
+    formData.append('avatar', blob, 'avatar.jpg');
+    return this.api.postForm('/profile/avatar', formData);
+  }
 }

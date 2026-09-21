@@ -1,3 +1,4 @@
+const path = require('path');
 const User = require('../models/User');
 const PatientProfile = require('../models/PatientProfile');
 const DoctorProfile = require('../models/DoctorProfile');
@@ -58,4 +59,27 @@ const updateMyProfile = async (req, res) => {
   }
 };
 
-module.exports = { getMyProfile, updateMyProfile };
+/**
+ * Upload de la photo de profil (avatar). Réutilise le même pattern multer
+ * que la Phase 5 (upload d'ordonnance) : le fichier est déjà écrit dans
+ * backend/uploads par le middleware multer configuré dans les routes.
+ */
+const uploadAvatar = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'Aucune image reçue (champ "avatar" requis)' });
+    }
+
+    const utilisateur = await User.findByIdAndUpdate(
+      req.user.id,
+      { $set: { photoUrl: `/uploads/${path.basename(req.file.path)}` } },
+      { new: true }
+    ).select('-motDePasseHash');
+
+    return res.status(200).json({ message: 'Photo de profil mise à jour', utilisateur });
+  } catch (error) {
+    return res.status(500).json({ message: "Erreur lors de l'upload de l'avatar", error: error.message });
+  }
+};
+
+module.exports = { getMyProfile, updateMyProfile, uploadAvatar };

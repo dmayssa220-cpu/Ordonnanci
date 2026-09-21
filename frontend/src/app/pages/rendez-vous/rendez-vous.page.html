@@ -19,6 +19,9 @@
 
   <ion-list *ngIf="!chargement && rdvs.length > 0">
     <ion-item *ngFor="let rdv of rdvs">
+      <ion-avatar slot="start">
+        <img [src]="photoAutrePartie(rdv) | avatarUrl" alt="" />
+      </ion-avatar>
       <ion-label>
         <h2>{{ nomAutrePartie(rdv) }}</h2>
         <p>{{ formatDate(rdv.date) }}<span *ngIf="rdv.motif"> — {{ rdv.motif }}</span></p>

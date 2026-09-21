@@ -46,8 +46,8 @@ const getMyAppointments = async (req, res) => {
   try {
     const filtre = req.user.role === 'medecin' ? { medecinId: req.user.id } : { patientId: req.user.id };
     const rdvs = await Appointment.find(filtre)
-      .populate('patientId', 'nom prenom email')
-      .populate('medecinId', 'nom prenom email')
+      .populate('patientId', 'nom prenom email photoUrl')
+      .populate('medecinId', 'nom prenom email photoUrl')
       .sort({ date: 1 });
 
     return res.status(200).json({ rdvs });

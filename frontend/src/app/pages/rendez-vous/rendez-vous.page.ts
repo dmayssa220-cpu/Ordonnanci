@@ -16,12 +16,14 @@ import {
   IonFab,
   IonFabButton,
   IonIcon,
+  IonAvatar,
   AlertController,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { addOutline } from 'ionicons/icons';
 import { AppointmentService, RendezVous } from '../../services/appointment.service';
 import { AuthService } from '../../services/auth.service';
+import { AvatarUrlPipe } from '../../pipes/avatar-url.pipe';
 
 @Component({
   selector: 'app-rendez-vous',
@@ -31,6 +33,7 @@ import { AuthService } from '../../services/auth.service';
   imports: [
     CommonModule,
     RouterLink,
+    AvatarUrlPipe,
     IonContent,
     IonHeader,
     IonToolbar,
@@ -45,6 +48,7 @@ import { AuthService } from '../../services/auth.service';
     IonFab,
     IonFabButton,
     IonIcon,
+    IonAvatar,
   ],
 })
 export class RendezVousPage implements OnInit {
@@ -88,6 +92,11 @@ export class RendezVousPage implements OnInit {
       return this.estMedecin ? `${autre.prenom} ${autre.nom}` : `Dr ${autre.prenom} ${autre.nom}`;
     }
     return this.estMedecin ? 'Patient' : 'Médecin';
+  }
+
+  photoAutrePartie(rdv: RendezVous): string | null | undefined {
+    const autre = this.estMedecin ? rdv.patientId : rdv.medecinId;
+    return typeof autre === 'object' ? autre.photoUrl : null;
   }
 
   formatDate(dateIso: string): string {

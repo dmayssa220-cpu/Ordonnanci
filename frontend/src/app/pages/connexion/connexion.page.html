@@ -6,7 +6,7 @@
 
 <ion-content class="ion-padding">
   <div class="odonnanci-auth-container">
-    <h1 class="odonnanci-headline">Ordonnonci</h1>
+    <h1 class="odonnanci-headline">Bon retour</h1>
     <p>Connecte-toi pour suivre tes traitements et tes rendez-vous.</p>
 
     <form [formGroup]="formulaire" (ngSubmit)="seConnecter()">
@@ -32,6 +32,19 @@
 
       <ion-button expand="block" type="submit" [disabled]="chargement" class="ion-margin-top">
         {{ chargement ? 'Connexion...' : 'Se connecter' }}
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        fill="outline"
+        type="button"
+        class="ion-margin-top"
+        *ngIf="biometrieActivee"
+        [disabled]="chargement"
+        (click)="seConnecterAvecBiometrie()"
+      >
+        <ion-icon name="finger-print-outline" slot="start"></ion-icon>
+        Se connecter avec Face ID / empreinte
       </ion-button>
     </form>
 

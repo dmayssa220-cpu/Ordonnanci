@@ -12,8 +12,8 @@ export interface Medecin {
 
 export interface RendezVous {
   _id: string;
-  patientId: { _id: string; nom: string; prenom: string } | string;
-  medecinId: { _id: string; nom: string; prenom: string } | string;
+  patientId: { _id: string; nom: string; prenom: string; photoUrl?: string } | string;
+  medecinId: { _id: string; nom: string; prenom: string; photoUrl?: string } | string;
   date: string;
   motif?: string;
   statut: 'confirme' | 'annule' | 'reporte' | 'termine';

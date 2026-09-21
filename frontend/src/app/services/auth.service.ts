@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, Observable } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, from, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { StorageService } from './storage.service';
@@ -10,6 +10,7 @@ export interface Utilisateur {
   prenom: string;
   email: string;
   role: 'patient' | 'medecin' | 'admin';
+  photoUrl?: string;
 }
 
 export interface ReponseAuth {
@@ -43,6 +44,30 @@ export class AuthService {
     return this.api
       .post<ReponseAuth>('/auth/login', { email, motDePasse })
       .pipe(switchMap((reponse) => from(this.enregistrerSession(reponse))));
+  }
+
+  /**
+   * Reconnexion via un refreshToken déjà connu (utilisé par la connexion
+   * biométrique : le refreshToken est récupéré depuis le stockage sécurisé
+   * du système après validation Face ID/empreinte, puis échangé ici contre
+   * un accessToken frais). Retourne true si la reconnexion a réussi.
+   */
+  async connexionParRefreshToken(refreshToken: string): Promise<boolean> {
+    try {
+      const { accessToken } = await firstValueFrom(
+        this.api.post<{ accessToken: string }>('/auth/refresh', { refreshToken })
+      );
+      await this.storage.set('accessToken', accessToken);
+      await this.storage.set('refreshToken', refreshToken);
+
+      const { utilisateur } = await firstValueFrom(this.api.get<{ utilisateur: Utilisateur }>('/profile/me'));
+      await this.storage.set('utilisateur', JSON.stringify(utilisateur));
+      this.utilisateurCourant$.next(utilisateur);
+
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   /**

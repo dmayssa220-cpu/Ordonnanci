@@ -21,6 +21,7 @@ import {
 import { addIcons } from 'ionicons';
 import { addOutline, trashOutline } from 'ionicons/icons';
 import { PrescriptionService, Prescription } from '../../../services/prescription.service';
+import { LocalNotificationService } from '../../../services/local-notification.service';
 
 @Component({
   selector: 'app-valider-ordonnance',
@@ -59,6 +60,7 @@ export class ValiderOrdonnancePage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private prescriptionService: PrescriptionService,
+    private localNotificationService: LocalNotificationService,
     private toastController: ToastController,
     private cdr: ChangeDetectorRef
   ) {
@@ -131,15 +133,22 @@ export class ValiderOrdonnancePage implements OnInit {
     this.enregistrement = true;
     this.erreur = '';
 
+    const heuresPriseParLigne: string[][] = this.medicaments.value.map((m: { heuresPrise: string }) =>
+      m.heuresPrise
+        .split(',')
+        .map((h: string) => h.trim())
+        .filter(Boolean)
+    );
+
     const medicamentsValides = this.medicaments.value.map(
-      (m: { nom: string; dosage: string; frequence: string; heuresPrise: string; dateDebut: string; dateFin: string }) => ({
+      (
+        m: { nom: string; dosage: string; frequence: string; heuresPrise: string; dateDebut: string; dateFin: string },
+        i: number
+      ) => ({
         nom: m.nom,
         dosage: m.dosage,
         frequence: m.frequence,
-        heuresPrise: m.heuresPrise
-          .split(',')
-          .map((h) => h.trim())
-          .filter(Boolean),
+        heuresPrise: heuresPriseParLigne[i],
         dateDebut: m.dateDebut,
         dateFin: m.dateFin || undefined,
       })
@@ -148,9 +157,24 @@ export class ValiderOrdonnancePage implements OnInit {
     this.prescriptionService
       .validerOrdonnance(this.prescriptionId, { medicamentsValides, corrige: this.aEteModifie })
       .subscribe({
-        next: async () => {
+        next: async ({ medicamentsCrees }) => {
           this.enregistrement = false;
           this.cdr.detectChanges();
+
+          // Programme un rappel local pour chaque médicament réellement créé
+          (medicamentsCrees as { _id: string; nom: string; dosage: string; dateDebut: string; dateFin: string }[]).forEach(
+            (med, i) => {
+              this.localNotificationService.planifierRappelsMedicament({
+                medicamentId: med._id,
+                nom: med.nom,
+                dosage: med.dosage,
+                dateDebut: med.dateDebut,
+                dateFin: med.dateFin,
+                heuresPrise: heuresPriseParLigne[i] || ['08:00'],
+              });
+            }
+          );
+
           const toast = await this.toastController.create({
             message: `${medicamentsValides.length} médicament(s) ajouté(s) avec leurs rappels`,
             duration: 2000,

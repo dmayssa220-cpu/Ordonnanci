@@ -24,6 +24,9 @@
 
   <ion-list *ngIf="!chargement">
     <ion-item *ngFor="let medecin of medecins" button (click)="voirCreneaux(medecin)">
+      <ion-avatar slot="start">
+        <img [src]="medecin.userId.photoUrl | avatarUrl" alt="Dr {{ medecin.userId.nom }}" />
+      </ion-avatar>
       <ion-label>
         <h2>Dr {{ medecin.userId.prenom }} {{ medecin.userId.nom }}</h2>
         <p>

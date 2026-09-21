@@ -18,6 +18,7 @@ import {
 import { addIcons } from 'ionicons';
 import { addOutline, closeOutline, trashOutline } from 'ionicons/icons';
 import { MedicationService } from '../../../services/medication.service';
+import { LocalNotificationService } from '../../../services/local-notification.service';
 
 @Component({
   selector: 'app-ajouter-medicament',
@@ -48,6 +49,7 @@ export class AjouterMedicamentPage {
   constructor(
     private fb: FormBuilder,
     private medicationService: MedicationService,
+    private localNotificationService: LocalNotificationService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {
@@ -91,6 +93,9 @@ export class AjouterMedicamentPage {
     this.erreur = '';
     const valeurs = this.formulaire.value;
 
+    const dateFinEffective: string =
+      valeurs.dateFin || new Date(new Date(valeurs.dateDebut).getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
     const donnees: {
       nom: string;
       dosage: string;
@@ -108,9 +113,20 @@ export class AjouterMedicamentPage {
     if (valeurs.dateFin) donnees.dateFin = valeurs.dateFin;
 
     this.medicationService.creerMedicament(donnees).subscribe({
-      next: () => {
+      next: ({ medicament }) => {
         this.chargement = false;
         this.cdr.detectChanges();
+
+        // Programme les rappels locaux sur l'appareil (silencieux si permission refusée)
+        this.localNotificationService.planifierRappelsMedicament({
+          medicamentId: medicament._id,
+          nom: medicament.nom,
+          dosage: medicament.dosage,
+          dateDebut: medicament.dateDebut,
+          dateFin: medicament.dateFin || dateFinEffective,
+          heuresPrise: valeurs.heuresPrise,
+        });
+
         this.router.navigateByUrl('/medicaments');
       },
       error: (err) => {

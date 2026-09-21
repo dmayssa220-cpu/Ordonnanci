@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import {
   IonContent,
   IonHeader,
@@ -21,6 +21,7 @@ import {
 import { addIcons } from 'ionicons';
 import { addOutline, trashOutline } from 'ionicons/icons';
 import { MedicationService, Medicament } from '../../services/medication.service';
+import { LocalNotificationService } from '../../services/local-notification.service';
 
 @Component({
   selector: 'app-medicaments',
@@ -29,7 +30,6 @@ import { MedicationService, Medicament } from '../../services/medication.service
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     IonContent,
     IonHeader,
     IonToolbar,
@@ -53,6 +53,7 @@ export class MedicamentsPage implements OnInit {
 
   constructor(
     private medicationService: MedicationService,
+    private localNotificationService: LocalNotificationService,
     private router: Router,
     private alertController: AlertController,
     private cdr: ChangeDetectorRef
@@ -117,6 +118,8 @@ export class MedicamentsPage implements OnInit {
     this.medicationService.supprimerMedicament(id).subscribe(() => {
       this.medicaments = this.medicaments.filter((m) => m._id !== id);
       this.cdr.detectChanges();
+      // Annule aussi les rappels locaux programmés sur l'appareil pour ce médicament
+      this.localNotificationService.annulerRappelsMedicament(id);
     });
   }
 }

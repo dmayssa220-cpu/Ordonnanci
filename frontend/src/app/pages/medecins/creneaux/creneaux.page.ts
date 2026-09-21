@@ -19,6 +19,7 @@ import {
   ToastController,
 } from '@ionic/angular';
 import { AppointmentService } from '../../../services/appointment.service';
+import { LocalNotificationService } from '../../../services/local-notification.service';
 
 @Component({
   selector: 'app-creneaux',
@@ -58,6 +59,7 @@ export class CreneauxPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private appointmentService: AppointmentService,
+    private localNotificationService: LocalNotificationService,
     private toastController: ToastController,
     private cdr: ChangeDetectorRef
   ) {}
@@ -94,6 +96,8 @@ export class CreneauxPage implements OnInit {
     this.enregistrement = true;
     this.erreur = '';
 
+    const dateHeureIso = `${this.date}T${this.creneauSelectionne}:00.000Z`;
+
     const operation = this.reporterId
       ? this.appointmentService.reporterRendezVous(this.reporterId, {
           date: this.date,
@@ -107,9 +111,15 @@ export class CreneauxPage implements OnInit {
         });
 
     operation.subscribe({
-      next: async () => {
+      next: async (reponse) => {
         this.enregistrement = false;
         this.cdr.detectChanges();
+
+        const rdvId = (reponse as { rdv: { _id: string } }).rdv?._id || this.reporterId || '';
+        if (rdvId) {
+          this.localNotificationService.planifierRappelsRendezVous({ rdvId, date: dateHeureIso });
+        }
+
         const toast = await this.toastController.create({
           message: this.reporterId ? 'Rendez-vous reporté' : 'Rendez-vous confirmé',
           duration: 1500,
